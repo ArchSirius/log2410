@@ -1,0 +1,22 @@
+2.3 
+
+a) Donnez les changements nécessaires lorsque l’on décide de supporter un codec supplémentaire dans PolyMediaTV. Soyez le plus complet possible.
+
+Si on veut ajouter un codec, il faut en premier ajouter une classe pour le codec qui va implémenter les algorithmes nécéssaires. Ensuite, il faut ajouter ce codec dans l'enum PMTVCodec_InterfaceType si celui-ci n'est pas déjà là. Puis, dans le PMTVCodec_CodecFactory, il faut aussi ajouter la méthode de création de ce codec. Ensuite, il faudra ajouter une clée dans le map m_codecMap de PMTVCodec_CodecFactory et finalement ajouter un énoncé conditionnel dans la méthode PMTVCodec_CodecFactory::getCodecInterface(). On a pas besoin de modifier  PMTVCodec_CodecFactory::isCodecSupported() car celui-ci se base sur les clées du map.
+
+b) L’implémentation proposée utilise une instruction switch / série de if-then-else pour déterminer si l’interface d’un CODEC existe et doit être construite. Proposez une alternative orienté-objet à la méthode getCodecInterface() de l’usine pour éviter l’utilisation de switch / if en fonction du type reçu.(vous pouvez changer complètement l’usine si nécessaire)
+
+On pourrait utiliser un Abstract Factory plutôt que le Factory actuel qui propose des énoncés conditionnels. Avec le Abstract Factory, chaque usine concrète va s'occuper de construire la bonne classe. On aura simplement besoin d'appeler getCodecInterface() qui sera surchargé dans les classe concrètes pour retourner le bon type sans avoir recours à des énoncés condiotionnels.
+
+c) Nommez le patron qui est utilisé pour les classes de CODECs (par exemple PMTVCodec_MPEG4CodecInterface) et justifiez son utilisation.
+
+Le patron Strategy est utilisé dans le contexte des codec, où chaque codec utilisé est une stratégie. Le contexte (PMTVMedia_MediaExtractor) s'attend à utiliser un PMTVCodec_CodecInterface qui représente la stratégie abstraite. On utilise ce patron car on veut pouvoir utiliser différents algorithmes de décodage qui varient en fonction du codec. 
+
+
+3.3 Nommez deux avantages ainsi qu’un inconvénient à l’utilisation d’un médiateur (classe PMTVMedia_MediaExtractor) pour l’extraction des trames des média dans le système PolyMediaTV. Demeurez dans le contexte de PolyMediaTV.
+
+Le premier avantage est que le codec n'a pas besoin de connaître le conteneur et le conteneur n'a pas besoin de conaître le codec, ce qui leur enlève les responsabilitées de médiation et rend ces deux classes indépendantes l'un de l'autre, ce qui les rend plus réutilisables.
+
+Le second avantage est que cela rend le code plus facile à réusiner. Il faut se rendre à l'évidence, tout code sera obsolète et aura besoin d'être modifié autant au niveau logique que structurel. Encapsuler ainsi les communications entre le codec et le conteneur aide à mieux diviser ces classes et à leur donner une responsabilité unique, ce qui rend le réusinage beaucoup plus facile.
+
+Le désavantage est que le médiateur peut devenir gros, complexe et très abstrait. Effectivement, puisque cette classe connait à la fois le codec et le conteneur, il serait facile d'implémenter beaucoup de logique dans ses méthodes au détriment des classes qui devraient posséder cette logique. De plus, ce médiateur manipule des données dont il ne connait pas le type, ce qui peut le rendre très difficile à comprendre et à manipuler s'il devient trop gros.
